@@ -27,6 +27,20 @@ func getAlbums(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, albums) // 200 es el código de estado HTTP que indica que la solicitud se ha completado con éxito
 }
 
+// vamos a crear una función que nos permita agregar un elemento al listado en memoria
+func postAlbum(c *gin.Context) {
+	var newAlbum album
+	
+	// BindJSON es un método que se utiliza para enlazar la solicitud JSON con la estructura de datos
+	if err := c.BindJSON(&newAlbum); err != nil {
+		return
+	}
+
+	albums = append(albums, newAlbum)
+
+	c.IndentedJSON(http.StatusCreated, newAlbum) // 201 es el código de estado HTTP que indica que la solicitud se ha completado con éxito y se ha creado un nuevo recurso
+}
+
 
 func main() {
 	fmt.Println("Bienvenido a la aplicación de ejemplo!")
@@ -47,8 +61,10 @@ func main() {
 
 	// 04 - Definimos una ruta para obtener todos los álbumes
 	router.GET("/albums", getAlbums)
+	// 05 - Vamos a crear un nuevo album
+	router.POST("/albums", postAlbum)
 
-	// 05 - arrancamos el servidor en el puerto 8080
+	// 06 - arrancamos el servidor en el puerto 8080
 	router.Run(":3000")
 
 }
