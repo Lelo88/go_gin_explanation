@@ -41,6 +41,20 @@ func postAlbum(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, newAlbum) // 201 es el código de estado HTTP que indica que la solicitud se ha completado con éxito y se ha creado un nuevo recurso
 }
 
+// vamos a crear una función que nos permita obtener un álbum por su ID a través de una URL
+func getAlbumsByID(c *gin.Context) {
+	id := c.Param("id")
+	
+	for _, a := range albums {
+		if a.ID == id {
+			c.IndentedJSON(http.StatusOK, a)
+			return
+		}
+	}
+
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "album not found"})
+}
+
 
 func main() {
 	fmt.Println("Bienvenido a la aplicación de ejemplo!")
@@ -64,7 +78,10 @@ func main() {
 	// 05 - Vamos a crear un nuevo album
 	router.POST("/albums", postAlbum)
 
-	// 06 - arrancamos el servidor en el puerto 8080
+	// 06 - Vamos a crear una ruta para obtener un álbum por su ID
+	router.GET("/albums/:id", getAlbumsByID)
+
+	// 07 - arrancamos el servidor en el puerto 8080
 	router.Run(":3000")
 
 }
